@@ -17,11 +17,11 @@ class Scratch3YourExtension {
             id: 'yourScratchExtension',
 
             // name that will be displayed in the Scratch UI
-            name: 'Demo',
+            name: 'PokeAPI',
 
             // colours to use for your extension blocks
-            color1: '#000099',
-            color2: '#660066',
+            color1: '#ff1f1f',
+            color2: '#ff4f4f',
 
             // icons to display
             blockIconURI: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAAAAACyOJm3AAAAFklEQVQYV2P4DwMMEMgAI/+DEUIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
@@ -41,7 +41,7 @@ class Scratch3YourExtension {
                     blockType: BlockType.REPORTER,
 
                     // label to display on the block
-                    text: 'My first block [MY_NUMBER] and [MY_STRING]',
+                    text: 'Get name of Pokemon with id [POKEMON_ID]',
 
                     // true if this block should end a stack
                     terminal: false,
@@ -54,9 +54,9 @@ class Scratch3YourExtension {
 
                     // arguments used in the block
                     arguments: {
-                        MY_NUMBER: {
+                        POKEMON_ID: {
                             // default value before the user sets something
-                            defaultValue: 123,
+                            defaultValue: 132,
 
                             // type/shape of the parameter - choose from:
                             //     ArgumentType.ANGLE - numeric value with an angle picker
@@ -67,19 +67,6 @@ class Scratch3YourExtension {
                             //     ArgumentType.NOTE - midi music value with a piano picker
                             type: ArgumentType.NUMBER
                         },
-                        MY_STRING: {
-                            // default value before the user sets something
-                            defaultValue: 'hello',
-
-                            // type/shape of the parameter - choose from:
-                            //     ArgumentType.ANGLE - numeric value with an angle picker
-                            //     ArgumentType.BOOLEAN - true/false value
-                            //     ArgumentType.COLOR - numeric value with a colour picker
-                            //     ArgumentType.NUMBER - numeric value
-                            //     ArgumentType.STRING - text value
-                            //     ArgumentType.NOTE - midi music value with a piano picker
-                            type: ArgumentType.STRING
-                        }
                     }
                 }
             ]
@@ -91,9 +78,18 @@ class Scratch3YourExtension {
      * implementation of the block with the opcode that matches this name
      *  this will be called when the block is used
      */
-    myFirstBlock ({ MY_NUMBER, MY_STRING }) {
+    myFirstBlock ({ POKEMON_ID }) {
         // example implementation to return a string
-        return MY_STRING + ' : doubled would be ' + (MY_NUMBER * 2);
+        return fetch('https://pokeapi.co/api/v2/pokemon/'+ POKEMON_ID +'/')
+            .then((response) => {
+                if(response.ok){
+                    return response.json();
+                }else{
+                    return { name: 'Unknown Pokemon!'};
+                }
+            }).then((pokemoninfo) => {
+                return pokemoninfo.name;
+            });
     }
 }
 
